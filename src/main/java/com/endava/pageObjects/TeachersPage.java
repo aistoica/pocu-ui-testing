@@ -1,10 +1,15 @@
 package com.endava.pageObjects;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.paulhammant.ngwebdriver.NgWebDriver;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,6 +23,7 @@ public class TeachersPage extends BasePageObject {
 
 	private By addTeacherButton = By.cssSelector( "button[color='primary']" );
 	private By teacherListSelector = By.cssSelector( "app-teacher > div > span:last-child" );
+	private By editButton = By.cssSelector( ".edit-icon-container" );
 
 	public TeachersPage( WebDriver driver ) {
 		super(driver);
@@ -41,6 +47,9 @@ public class TeachersPage extends BasePageObject {
 	}
 
 	public void waitForLoad(int noOfTeachers) {
+		NgWebDriver ngWebDriver = new NgWebDriver( (JavascriptExecutor) driver );
+		ngWebDriver.waitForAngularRequestsToFinish();
+
 		WebDriverWait wait = new WebDriverWait( driver, Duration.ofSeconds( 2 ) );
 		wait.until(
 				ExpectedConditions.numberOfElementsToBeMoreThan(
@@ -65,5 +74,14 @@ public class TeachersPage extends BasePageObject {
 				.map( element -> element.getText() )
 				.collect( Collectors.toList());
 		return teacherNameList;
+	}
+
+	public AddTeacherPopUp editTeacher(String name) {
+		int indexToSelect = getTeacherNames().indexOf( name );
+		driver.findElements( editButton ).get( indexToSelect ).click();
+
+		AddTeacherPopUp addTeacherPopUp = new AddTeacherPopUp( driver );
+		addTeacherPopUp.waitForLoad();
+		return addTeacherPopUp;
 	}
 }
