@@ -26,4 +26,19 @@ public class DataGenerator {
 
 		return teacher;
 	}
+
+	public Teacher generateAPITeacher() {
+
+		DateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
+
+		Teacher teacher = new Teacher();
+		teacher.setFirstName( faker.name().firstName());
+		teacher.setLastName( faker.name().lastName() );
+		teacher.setBirthDate( dateFormat.format( faker.date().birthday() ) );
+		teacher.setEmploymentDate( dateFormat.format( faker.date().past( 5*365, TimeUnit.DAYS ) ) );
+		teacher.setCnp( faker.number().digits( 13 ) );
+		teacher.setSalary( faker.number().numberBetween( 100, 300 ) + "" );
+
+		return teacher;
+	}
 }
